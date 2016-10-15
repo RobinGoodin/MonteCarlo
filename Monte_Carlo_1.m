@@ -26,6 +26,6 @@ S = D * time;
 fprintf('Origin Integral %f\n', I);
 fprintf('Estimate of Integral %f\n', M);
 fprintf('Elapced time %f seconds\n', time);
-fprintf('Âispersion(*10^8) %f\n', D*10^8);
+fprintf('Dispersion(*10^8) %f\n', D*10^8);
 fprintf('Laboriousness(*10^8) %f\n', S*10^8);
 
