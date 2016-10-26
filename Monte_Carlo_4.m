@@ -2,7 +2,7 @@ clear
 clc
 close
 rand('seed',666);
-%% Расчёт интеграла
+%% ?????? ?????????
 I = 0;
 X = [0 0 0 0; 0.5 0.5 0.5 0.5; 1 1 1 1];
 for k=0:100
@@ -15,7 +15,7 @@ end
 vpa(I,10);
 %I = 16.211553
 
-%% Формирование пределов частичных интегралов
+%% ???????????? ???????? ????????? ??????????
 I01 = [0.0 0.0 0.0 0.0; 0.5 0.5 0.5 0.5];
 I02 = [0.0 0.0 0.0 0.5; 0.5 0.5 0.5 1.0];
 I03 = [0.0 0.0 0.5 0.0; 0.5 0.5 1.0 0.5];
@@ -49,7 +49,7 @@ II(:,:,14) = I14;
 II(:,:,15) = I15;
 II(:,:,16) = I16;
 
-%% Нахождение частичных интегралов вероятностей
+%% ?????????? ????????? ?????????? ????????????
 I2 = zeros(1,16);
 for i=1:16
     for k=0:100
@@ -66,11 +66,11 @@ for i=1:16
     Xy = II(2,2,i)^(1/2)-II(1,2,i)^(1/2);
     Xz = II(2,3,i)^(1/2)-II(1,3,i)^(1/2);
     Xu = II(2,4,i)^(1/2)-II(1,4,i)^(1/2);
-    p(1,i) = Xx*Xy*Xz*Xu;
+    p(i) = Xx*Xy*Xz*Xu;
 end
 summa = sum(p);
 
-%% Нахождение оценки
+%% ?????????? ??????
 tic
 NN = 100000;
 N = zeros(1,16);
@@ -83,19 +83,63 @@ D = zeros(1,16);
 for k=1:16
     g = rand(N(k),4);
     for i=1:N(k)
-        x = g(i,1)^2;
-        y = g(i,2)^2;
-        z = g(i,3)^2;
-        u = g(i,4)^2;
+        x = (II(1,1,k)^(1/2) + g(i,1)*(II(2,1,k)^(1/2)-II(1,1,k)^(1/2)))^2;
+        y = (II(1,2,k)^(1/2) + g(i,2)*(II(2,2,k)^(1/2)-II(1,2,k)^(1/2)))^2;
+        z = (II(1,3,k)^(1/2) + g(i,3)*(II(2,3,k)^(1/2)-II(1,3,k)^(1/2)))^2;
+        u = (II(1,4,k)^(1/2) + g(i,4)*(II(2,4,k)^(1/2)-II(1,4,k)^(1/2)))^2;
         M(k) = M(k) + p(k)*16*exp(x*y*z*u);
         M2(k) = M2(k) + (p(k)*16*exp(x*y*z*u))^2;
     end
     M(k) = M(k) / N(k);
-    M2(k) = M2(k) / (N(k) * (N(k) - 1));
-    D(k) = M2(k) - M(k)^2 / (N(k) - 1);
+    M2(k) = M2(k) / N(k);
+    D(k) = M2(k) - M(k)^2;
 end
 M_I = sum(M);
-D_I = sum(D);
+D_I = 0;
+for j = 1:16
+    D_I = D_I + D(j)*p(j)*p(j)/N(j);
+end
+time = toc;
+S_I = D_I * time;
+fprintf('N = %d\n', NN);
+fprintf('Origin Integral %f\n', I);
+fprintf('Estimate of Integral %f\n', M_I);
+fprintf('Elapced time %f seconds\n', time);
+fprintf('Dispersion(*10^8) %f\n', D_I*10^8);
+fprintf('Laboriousness(*10^8) %f\n', S_I*10^8);
+
+tic
+GG = 0;
+for k = 1:16
+    GG = GG + sqrt(D(k))'*p(k);
+end
+N = zeros(1,16);
+for i=1:16
+    N(i) = round(NN*p(i)*sqrt(D(i))/(GG));
+end
+M = zeros(1,16);
+M2 = zeros(1,16);
+D = zeros(1,16);
+for k=1:16
+    g = rand(N(k),4);
+    for i=1:N(k)
+        x = (II(1,1,k)^(1/2) + g(i,1)*(II(2,1,k)^(1/2)-II(1,1,k)^(1/2)))^2;
+        y = (II(1,2,k)^(1/2) + g(i,2)*(II(2,2,k)^(1/2)-II(1,2,k)^(1/2)))^2;
+        z = (II(1,3,k)^(1/2) + g(i,3)*(II(2,3,k)^(1/2)-II(1,3,k)^(1/2)))^2;
+        u = (II(1,4,k)^(1/2) + g(i,4)*(II(2,4,k)^(1/2)-II(1,4,k)^(1/2)))^2;
+        M(k) = M(k) + p(k)*16*exp(x*y*z*u);
+        M2(k) = M2(k) + (p(k)*16*exp(x*y*z*u))^2;
+    end
+    M(k) = M(k) / N(k);
+    M2(k) = M2(k) / N(k);
+    D(k) = M2(k) - M(k)^2;
+end
+M_I = sum(M);
+D_I = 0;
+for j = 1:16
+    D_I = D_I + D(j)*p(j)*p(j)/N(j);
+end
+
 time = toc;
 S_I = D_I * time;
 fprintf('N = %d\n', NN);

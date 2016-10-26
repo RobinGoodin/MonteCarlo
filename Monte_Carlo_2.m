@@ -8,22 +8,23 @@ for k=0:100
 end
 %I = 16.2116
 C = 16.1975;
-f = @(x,y,z,u) exp(x*y*z*u)/sqrt(x*y*z*u);
-g = @(x,y,z,u) 1 + x*y*z*u;
+% f = @(x,y,z,u) exp(x*y*z*u)/sqrt(x*y*z*u);
+% g = @(x,y,z,u) 1 + x*y*z*u;
 tic
 N = 100000;
 M = 0;
 M2 = 0;
 y = rand(N,4);
 for i=1:N
-    M = M + C + 16*(exp(y(i,1)^2*y(i,2)^2*y(i,3)^2*y(i,4)^2) ...
+    M = M + 16*(exp(y(i,1)^2*y(i,2)^2*y(i,3)^2*y(i,4)^2) ...
         - 1 - y(i,1)^2*y(i,2)^2*y(i,3)^2*y(i,4)^2) ;
-    M2 = M2 + (16*exp(y(i,1)^2*y(i,2)^2*y(i,3)^2*y(i,4)^2))^2;
+    M2 = M2 + (16*(exp(y(i,1)^2*y(i,2)^2*y(i,3)^2*y(i,4)^2) ...
+        - 1 - y(i,1)^2*y(i,2)^2*y(i,3)^2*y(i,4)^2))^2;
 end
-M = M / N;
+M = M / N + C;
 time = toc;
 M2 = M2 / (N * (N - 1));
-D = M2 - M^2 / (N - 1);
+D = M2 - (M-C)^2 / (N - 1);
 S = D * time;
 fprintf('N = %d\n', N);
 fprintf('Origin Integral %f\n', I);
