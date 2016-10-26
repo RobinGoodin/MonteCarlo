@@ -3,9 +3,10 @@ clc
 close
 rand('seed',666);
 I = 0;
-for k=0:10
+for k=0:1000
    I = I + 16*1/(factorial(k)*(2*k+1)^4);
 end
+% vpa(I,10)
 %I = 16.2116
 func = @(x,y,z,u) exp(x*y*z*u)/sqrt(x*y*z*u);
 f = @(x,y,z,u) 16*exp(x*y*z*u);
@@ -23,6 +24,7 @@ time = toc;
 M2 = M2 / (N * (N - 1));
 D = M2 - M^2 / (N - 1);
 S = D * time;
+fprintf('N = %d\n', N);
 fprintf('Origin Integral %f\n', I);
 fprintf('Estimate of Integral %f\n', M);
 fprintf('Elapced time %f seconds\n', time);

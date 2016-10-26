@@ -3,7 +3,7 @@ clc
 close
 rand('seed',666);
 I = 0;
-for k=0:10
+for k=0:100
    I = I + 16*1/(factorial(k)*(2*k+1)^4);
 end
 %I = 16.2116
@@ -25,6 +25,7 @@ time = toc;
 M2 = M2 / (N * (N - 1));
 D = M2 - M^2 / (N - 1);
 S = D * time;
+fprintf('N = %d\n', N);
 fprintf('Origin Integral %f\n', I);
 fprintf('Estimate of Integral %f\n', M);
 fprintf('Elapced time %f seconds\n', time);
